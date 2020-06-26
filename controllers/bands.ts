@@ -31,5 +31,32 @@ const addBand = async ({request,response}:{request:any,response:any})=>{
         }
     }
 }
+const getBandsById=async({request,response}:{request:any,response:any})=>{
+    let id:string = request.params.id;
+    response.status=201;
+    response.body={
+        success:true,
+        data:id
+    }
+}
+const deleteBand= async ({request,response}:{request:any,response:any})=>{
+    if(!request.hasBody){
+        response.status=400;
+        response.body= {
+            success:false,
+            msg:'The request is empty'
+        }
+    }
+    else{
+        var x = bands.pop();
+        console.log(x);
+        response.status=201;
+        response.body= {
+            success:true,
+            msg:`${x.data} Removed`,
+            
+        }
+    }
+}
 
-export {getBands,addBand};
+export {getBands,addBand,deleteBand,getBandsById};
