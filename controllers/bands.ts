@@ -1,5 +1,6 @@
 import { Band } from "../types.ts";
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import {collection} from '../db/dbconnect.ts';
 
 let bands: Band[] = [];
 
@@ -26,12 +27,14 @@ const addBand = async ({
     };
   } else {
     const band: Band = body.value;
-    band.id = v4.generate();
-    bands.push(band);
+    const id = collection.insertOne({
+        band:band
+    })
+    
     response.status = 201;
     response.body = {
       success: true,
-      msg: band,
+      msg: id,
     };
   }
 };
