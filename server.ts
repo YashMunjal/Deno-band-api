@@ -1,4 +1,4 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router, RouterContext } from "https://deno.land/x/oak/mod.ts";
 
 import {
   getBands,

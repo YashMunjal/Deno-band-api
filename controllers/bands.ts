@@ -3,14 +3,14 @@ import { Band } from "../types.ts";
 import { db } from "../db/dbconnect.ts";
 
 const bandCollection = db.collection("bandCollection");
-const bands:Band=[];
-const getBands = async ({ response }: { response: any }) => {
+const bands: Band = [];
+const getBands = async (ctx:any) => {
     const data = await bandCollection.find();
-  response.body = {
-    success: true,
-    data: data,
+    ctx.render("static/bands.html",{data:data});
+    ctx.response.body = {
+      success: true,
+    };
   };
-};
 
 const addBand = async ({
   request,
@@ -35,7 +35,7 @@ const addBand = async ({
     });
 
     response.status = 201;
-    response.body =id
+    response.body = id;
   }
 };
 const getBandsById = async ({
@@ -47,8 +47,8 @@ const getBandsById = async ({
   response: any;
   params: { id: string };
 }) => {
-  let id: string|undefined=params.id;
-  const data :any = await bandCollection.findOne({_id: {"$oid": id}});
+  let id: string | undefined = params.id;
+  const data: any = await bandCollection.findOne({ _id: { "$oid": id } });
   if (!data) {
     response.status = 404;
     response.body = {
