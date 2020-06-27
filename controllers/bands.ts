@@ -1,13 +1,14 @@
 import { Band } from "../types.ts";
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import {collection} from '../db/dbconnect.ts';
+// import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import { db } from "../db/dbconnect.ts";
 
-let bands: Band[] = [];
-
-const getBands = ({ response }: { response: any }) => {
+const bandCollection = db.collection("bandCollection");
+const bands:Band=[];
+const getBands = async ({ response }: { response: any }) => {
+    const data = await bandCollection.find();
   response.body = {
     success: true,
-    data: bands,
+    data: data,
   };
 };
 
@@ -26,16 +27,15 @@ const addBand = async ({
       msg: "The request is empty",
     };
   } else {
-    const band: Band = body.value;
-    const id = collection.insertOne({
-        band:band
-    })
-    
+    const { name, genre, website }: Band = body.value;
+    const id = await bandCollection.insertOne({
+      name: name,
+      genre: genre,
+      website: website,
+    });
+
     response.status = 201;
-    response.body = {
-      success: true,
-      msg: id,
-    };
+    response.body =id
   }
 };
 const getBandsById = async ({
@@ -47,20 +47,21 @@ const getBandsById = async ({
   response: any;
   params: { id: string };
 }) => {
-  let id: Band | undefined = bands.find((e) => e.id == params.id);
-  if (id === undefined) {
+  let id: string|undefined=params.id;
+  const data :any = await bandCollection.findOne({_id: {"$oid": id}});
+  if (!data) {
     response.status = 404;
     response.body = {
       success: false,
       msg: "Could Not find",
     };
-  }else{
-  response.status = 201;
-  response.body = {
-    success: true,
-    data: id,
-  };
-}
+  } else {
+    response.status = 201;
+    response.body = {
+      success: true,
+      data: data,
+    };
+  }
 };
 const deleteBand = async ({
   request,
