@@ -13,6 +13,7 @@ router
 
 
 app.use(router.routes());
+app.use(router.allowedMethods());
 console.log(`App started on ${PORT}`);
 
 await app.listen({port:PORT});
